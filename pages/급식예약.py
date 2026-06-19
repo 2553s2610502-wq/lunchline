@@ -7,36 +7,31 @@ st.set_page_config(
 )
 
 # =========================
-# 🎨 배경 & 스타일 CSS
+# 🎨 배경 & 스타일 CSS ([수정] 에러를 유발하는 내부 주석 제거 및 url 따옴표 교정)
 # =========================
 st.markdown("""
 <style>
-/* 전체 배경 */
 .stApp {
     background: linear-gradient(rgba(255,255,255,0.92), rgba(255,255,255,0.92)),
-    url("https://images.unsplash.com/photo-1498837167922-ddd27525d352");
+    url('https://images.unsplash.com/photo-1498837167922-ddd27525d352');
     background-size: cover;
 }
 
-/* 제목 */
 h1 {
     text-align: center;
     color: #2E7D32;
     font-size: 40px;
 }
 
-/* 설명 */
 .stMarkdown p {
     text-align: center;
     font-size: 18px;
 }
 
-/* 입력 박스 */
 div[data-baseweb="select"], input {
     border-radius: 10px !important;
 }
 
-/* 버튼 */
 .stButton>button {
     background-color: #43A047;
     color: white;
@@ -53,7 +48,6 @@ div[data-baseweb="select"], input {
     transition: 0.2s;
 }
 
-/* 예약 카드 */
 .card {
     background-color: white;
     padding: 15px;
