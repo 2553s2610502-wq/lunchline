@@ -1,4 +1,4 @@
-import datetime  # [교정] 라이브러리 충돌 방지를 위해 전체 모듈 임포트
+import datetime
 import streamlit as st
 
 st.set_page_config(page_title="익명 새치기 신고 시스템")
@@ -9,7 +9,7 @@ st.write("신고자는 익명으로 처리되며 기록만 저장됩니다.")
 # -----------------------------
 # 데이터 저장
 # -----------------------------
-if "reports" not in st.session_state:
+if "reports" not in st.session_state or not isinstance(st.session_state.reports, list):
     st.session_state.reports = []
 
 if "report_count" not in st.session_state:
@@ -36,8 +36,6 @@ if st.button("익명 신고하기"):
         })
 
         st.success("익명으로 신고가 접수되었습니다!")
-        # [교정] 데이터 반영 즉시 화면을 갱신해 오작동을 차단합니다.
-        st.rerun()
 
 # -----------------------------
 # 신고 기록
@@ -48,4 +46,7 @@ if len(st.session_state.reports) == 0:
     st.info("아직 신고 기록이 없습니다.")
 else:
     for r in reversed(st.session_state.reports):
-        st.write(f"🔒 **[익명 신고 {r['id']}]** {r['target']} | {r['time']}")
+        st.write(
+            f"🔒 **[익명 신고 {r['id']}]** "
+            f"{r['target']} | {r['time']}"
+        )
