@@ -1,16 +1,16 @@
-import random
-import datetime
 import streamlit as st
 
-# 1. 페이지 기본 설정
+# [수정] 무조건 이 스크립트의 "최첫줄"에서 page_config를 실행해야 에러가 나지 않습니다.
 st.set_page_config(
     page_title="오늘의 급식 & 알레르기 알리미",
     page_icon="🍱",
     layout="centered"
 )
 
+import random
+import datetime
+
 # 2. 샘플 데이터 (오류 방지를 위해 내장 데이터 세트 활용)
-# 실제 서비스 시에는 API나 DB 연동이 가능하나, 배포 즉시 작동을 위해 안정적인 더미 데이터 구성
 MENUS_DATABASE = {
     "점심": [
         {"name": "돈가스", "allergies": ["대두", "밀", "돼지고기"]},
@@ -93,7 +93,8 @@ try:
                         detected_allergies.add(allergy)
                 else:
                     if item['allergies']:
-                        st.caption(f"<span style='color:gray'>알레르기: {', '.join(item['allergies'])}</span>", unsafe_allow_html=True)
+                        # [수정] 에러를 유발하는 HTML 태그 대신 Streamlit 전용 컬러 마크다운(:gray[]) 사용
+                        st.write(f":gray[알레르기: {', '.join(item['allergies'])}]")
                     else:
                         st.caption("성분 없음")
                         
