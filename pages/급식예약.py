@@ -1,124 +1,78 @@
-import streamlit as st
-
-st.set_page_config(
-    page_title="급식 예약 시스템",
-    page_icon="🍽️",
-    layout="centered"
-)
-
-# =========================
-# 🎨 배경 & 스타일 CSS
-# =========================
 st.markdown("""
 <style>
-/* 전체 배경 */
+
+/* 전체 배경 살짝 흐리게 */
 .stApp {
-    background: linear-gradient(rgba(255,255,255,0.92), rgba(255,255,255,0.92)),
+    background: linear-gradient(
+        rgba(255, 255, 255, 0.92),
+        rgba(255, 255, 255, 0.92)
+    ),
     url("https://images.unsplash.com/photo-1498837167922-ddd27525d352");
     background-size: cover;
 }
 
-/* 제목 */
+/* 제목 귀엽게 */
 h1 {
     text-align: center;
-    color: #2E7D32;
-    font-size: 40px;
+    color: #FF6B6B;
+    font-size: 42px;
+    font-weight: 800;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
 }
 
 /* 설명 */
 .stMarkdown p {
     text-align: center;
     font-size: 18px;
+    color: #555;
 }
 
-/* 입력 박스 */
-div[data-baseweb="select"], input {
-    border-radius: 10px !important;
+/* 입력 박스 카드화 */
+.block-container {
+    background-color: rgba(255,255,255,0.85);
+    padding: 25px;
+    border-radius: 20px;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.08);
 }
 
-/* 버튼 */
+/* 입력창 */
+input, .stSelectbox, .stNumberInput {
+    border-radius: 12px !important;
+}
+
+/* 버튼 (귀엽게 핵심) */
 .stButton>button {
-    background-color: #43A047;
+    background: linear-gradient(135deg, #FF6B6B, #FFB347);
     color: white;
     font-size: 18px;
-    padding: 10px 20px;
-    border-radius: 12px;
+    padding: 12px;
+    border-radius: 16px;
     border: none;
     width: 100%;
+    font-weight: bold;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.15);
 }
 
 .stButton>button:hover {
-    background-color: #2E7D32;
-    transform: scale(1.02);
+    transform: scale(1.03);
     transition: 0.2s;
 }
 
 /* 예약 카드 */
 .card {
-    background-color: white;
+    background: white;
     padding: 15px;
-    border-radius: 12px;
+    border-radius: 16px;
     margin: 8px 0;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    border-left: 6px solid #FF6B6B;
+    font-size: 16px;
 }
+
+/* 섹션 제목 */
+h2, h3 {
+    color: #333;
+}
+
 </style>
 """, unsafe_allow_html=True)
-
-# =========================
-# 📌 앱 제목
-# =========================
-st.title("🍽️ 급식 예약 시스템")
-st.write("오늘 급식을 먹을 학생은 정보를 입력하고 예약하세요!")
-
-# =========================
-# 📦 세션 초기화
-# =========================
-if "reservations" not in st.session_state:
-    st.session_state.reservations = []
-
-# =========================
-# 📝 입력 폼
-# =========================
-with st.form("reservation_form"):
-    grade = st.selectbox("학년", [1, 2, 3, 4, 5, 6])
-    classroom = st.number_input("반", min_value=1, max_value=20, step=1)
-    number = st.number_input("번호", min_value=1, max_value=50, step=1)
-
-    submit = st.form_submit_button("🍱 급식 예약하기")
-
-# =========================
-# ✅ 예약 처리
-# =========================
-if submit:
-    student_id = f"{grade}-{classroom}-{number}"
-
-    existing_ids = [item["id"] for item in st.session_state.reservations]
-
-    if student_id in existing_ids:
-        st.error("❌ 이미 예약한 학생입니다!")
-    else:
-        st.session_state.reservations.append({
-            "id": student_id,
-            "grade": grade,
-            "classroom": classroom,
-            "number": number
-        })
-        st.success("✅ 예약 완료! 맛있는 급식 드세요 🍱")
-
-# =========================
-# 📊 예약 현황
-# =========================
-st.divider()
-st.subheader("📋 예약 현황")
-
-if st.session_state.reservations:
-    for student in st.session_state.reservations:
-        st.markdown(f"""
-        <div class="card">
-            🍽️ {student['grade']}학년 {student['classroom']}반 {student['number']}번
-        </div>
-        """, unsafe_allow_html=True)
-
-    st.info(f"총 예약 인원: {len(st.session_state.reservations)}명")
-else:
-    st.info("아직 예약한 학생이 없습니다.")
