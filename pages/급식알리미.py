@@ -1,6 +1,6 @@
 import streamlit as st
 
-# [수정] 무조건 이 스크립트의 "최첫줄"에서 page_config를 실행해야 에러가 나지 않습니다.
+# [교정] 무조건 코드 최상단에 배치해야 에러가 나지 않습니다.
 st.set_page_config(
     page_title="오늘의 급식 & 알레르기 알리미",
     page_icon="🍱",
@@ -10,7 +10,7 @@ st.set_page_config(
 import random
 import datetime
 
-# 2. 샘플 데이터 (오류 방지를 위해 내장 데이터 세트 활용)
+# 2. 샘플 데이터
 MENUS_DATABASE = {
     "점심": [
         {"name": "돈가스", "allergies": ["대두", "밀", "돼지고기"]},
@@ -45,17 +45,13 @@ st.write("---")
 # 4. 사이드바 - 사용자 입력 제어
 st.sidebar.header("🔍 식단 조회 설정")
 
-# 날짜 선택 (기본값: 오늘)
 selected_date = st.sidebar.date_input("날짜를 선택하세요", datetime.date.today())
-
-# 식사 종류 선택
 meal_type = st.sidebar.radio("식사 종류", ["점심", "저녁"])
 
 st.sidebar.write("---")
 st.sidebar.header("⚠️ 나의 알레르기 정보")
 st.sidebar.write("조심해야 할 성분을 체크해 주세요.")
 
-# 알레르기 다중 선택 박스
 user_allergies = st.sidebar.multiselect(
     "알레르기 유발 물질 선택:",
     options=ALLERGY_LIST,
@@ -66,26 +62,21 @@ user_allergies = st.sidebar.multiselect(
 st.subheader(f"📅 {selected_date.strftime('%Y년 %m월 %d일')} - {meal_type} 메뉴")
 
 try:
-    # 선택한 식사 종류에 맞는 메뉴 가져오기
     current_menu = MENUS_DATABASE.get(meal_type, [])
     
     if not current_menu:
         st.info("선택하신 날짜의 식단 데이터가 없습니다.")
     else:
         detected_allergies = set()
-        
-        # 메뉴 표시를 위한 컨테이너
         st.markdown("### 🍴 식단표")
         
         for item in current_menu:
             col1, col2 = st.columns([3, 1])
             
             with col1:
-                # 메뉴 이름 출력
                 st.markdown(f"**• {item['name']}**")
                 
             with col2:
-                # 해당 메뉴의 알레르기 성분 중 사용자가 선택한 성분이 있는지 확인
                 overlap = set(item['allergies']).intersection(set(user_allergies))
                 if overlap:
                     st.error(f"⚠️ 주의 ({', '.join(overlap)})")
@@ -93,14 +84,13 @@ try:
                         detected_allergies.add(allergy)
                 else:
                     if item['allergies']:
-                        # [수정] 에러를 유발하는 HTML 태그 대신 Streamlit 전용 컬러 마크다운(:gray[]) 사용
+                        # [교정] 불안정한 HTML span 태그 대신 Streamlit 공식 컬러 마크다운 사용
                         st.write(f":gray[알레르기: {', '.join(item['allergies'])}]")
                     else:
                         st.caption("성분 없음")
                         
         st.write("---")
         
-        # 알레르기 종합 경고 알림
         if detected_allergies:
             st.warning(f"🚨 **경고:** 오늘 식단에 주의해야 할 알레르기 성분(**{', '.join(detected_allergies)}**)이 포함되어 있습니다! 식사 시 주의하세요.")
         elif user_allergies:
